@@ -1,0 +1,120 @@
+name: Build Tilawa (multi-plateforme)
+
+# Se déclenche :
+#  - manuellement (bouton "Run workflow" dans l'onglet Actions)
+#  - à chaque tag de version poussé (ex. v0.1.0) -> crée une Release avec les installeurs
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+env:
+  FLUTTER_VERSION: "3.27.0"
+  # Modèle Vosk arabe embarqué (téléchargé puis emballé dans l'app).
+  VOSK_MODEL_URL: "https://alphacephei.com/vosk/models/vosk-model-ar-mgb2-0.4.zip"
+
+jobs:
+  # ------------------------------------------------------------------ Android
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: "temurin", java-version: "17" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable }
+      - name: Télécharger le modèle Vosk
+        run: |
+          mkdir -p assets/models
+          curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
+      - name: Générer les dossiers de plateforme
+        run: flutter create --platforms=android .
+      - run: flutter pub get
+      - name: Build APK
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tilawa-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  # ------------------------------------------------------------------ Windows
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable }
+      - name: Télécharger le modèle Vosk
+        run: |
+          mkdir assets\models -Force
+          curl -L "$env:VOSK_MODEL_URL" -o assets\models\vosk-ar.zip
+        shell: pwsh
+      - run: flutter create --platforms=windows .
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - name: Zipper le build Windows
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath tilawa-windows.zip
+        shell: pwsh
+      - uses: actions/upload-artifact@v4
+        with: { name: tilawa-windows, path: tilawa-windows.zip }
+
+  # -------------------------------------------------------------------- macOS
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable }
+      - name: Télécharger le modèle Vosk
+        run: |
+          mkdir -p assets/models
+          curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
+      - run: flutter create --platforms=macos .
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - name: Zipper l'app macOS
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r -q "$GITHUB_WORKSPACE/tilawa-macos.zip" Tilawa.app
+      - uses: actions/upload-artifact@v4
+        with: { name: tilawa-macos, path: tilawa-macos.zip }
+
+  # -------------------------------------------------------------------- Linux
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dépendances Linux
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libgtk-3-dev
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable }
+      - name: Télécharger le modèle Vosk
+        run: |
+          mkdir -p assets/models
+          curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
+      - run: flutter create --platforms=linux .
+      - run: flutter pub get
+      - run: flutter build linux --release
+      - name: Archiver le build Linux
+        run: tar -C build/linux/x64/release/bundle -czf tilawa-linux.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with: { name: tilawa-linux, path: tilawa-linux.tar.gz }
+
+  # --------------------------------------- Publication de la Release (sur tag)
+  release:
+    needs: [android, windows, macos, linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist }
+      - name: Créer la Release avec tous les installeurs
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*
+          generate_release_notes: true

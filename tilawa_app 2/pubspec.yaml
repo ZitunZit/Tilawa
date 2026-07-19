@@ -1,0 +1,54 @@
+name: tilawa
+description: >-
+  Tilawa — Application libre et hors-ligne d'enregistrement et de nettoyage
+  automatique des récitations de prière pour les imams et les mosquées.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  # Flutter 3.27+ requis (API Color.withValues / CardThemeData).
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # --- Enregistrement audio multiplateforme (Android, iOS, Win, macOS, Linux, web) ---
+  record: ^5.1.2                 # capture micro -> WAV/PCM, tous OS
+  # --- Détection d'activité vocale (Silero VAD, embarqué via ONNX, hors-ligne) ---
+  vad: ^0.0.6                    # VAD Silero v4/v5 en local, sans réseau
+  # --- Reconnaissance vocale hors-ligne (ancrage Bismillah/Allahu Akbar) ---
+  vosk_flutter: ^0.3.48         # moteur Vosk embarqué (modèle en asset)
+  # --- Lecture audio (ré-écoute dans la bibliothèque) ---
+  just_audio: ^0.9.42
+  # --- Import de fichiers audio existants ---
+  file_picker: ^8.1.6
+  # --- Partage natif (WhatsApp, mail, cloud, etc.) ---
+  share_plus: ^10.1.3
+  # --- Stockage local (chemins, base légère) ---
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  sqflite: ^2.4.1               # index de la bibliothèque (mobile/desktop via ffi)
+  sqflite_common_ffi: ^2.3.4    # backend sqlite pour Windows/macOS/Linux
+  # --- Traitement audio bas niveau (découpe/concat sans réseau) ---
+  wav: ^1.4.0                   # lecture/écriture WAV en pur Dart
+  # --- État & injection légère ---
+  provider: ^6.1.2
+  intl: ^0.19.0
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    # Modèle Vosk arabe (zip) embarqué dans l'app. Le fichier réel n'est PAS
+    # dans le dépôt (trop volumineux) : il est téléchargé et placé ici par la
+    # compilation automatique (voir .github/workflows/build.yml), puis emballé
+    # dans l'installeur. En dev local, s'il est absent, l'app bascule
+    # automatiquement sur le sélecteur par densité (aucun plantage).
+    - assets/models/

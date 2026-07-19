@@ -1,0 +1,37 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+  Tilawa — Application d'enregistrement et de nettoyage des récitations
+  de prière pour les mosquées.
+  Copyright (C) 2026  Les contributeurs de Tilawa
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+===============================================================================
+
+  IMPORTANT — TEXTE INTÉGRAL DE LA LICENCE
+
+  Ce fichier contient l'avis de licence recommandé par la FSF. Avant la
+  première publication publique du dépôt, remplacez ce fichier par le texte
+  INTÉGRAL et VERBATIM de la GNU General Public License version 3, disponible
+  officiellement ici :
+
+        https://www.gnu.org/licenses/gpl-3.0.txt
+
+  (En ligne de commande :  curl -L https://www.gnu.org/licenses/gpl-3.0.txt -o LICENSE )
+
+  La licence choisie est la GPLv3 : elle garantit que Tilawa et tous ses
+  dérivés resteront libres et open source (copyleft fort), conformément à
+  l'objectif d'un outil communautaire pérenne, et empêche toute
+  réappropriation propriétaire du code.

@@ -29,7 +29,7 @@ jobs:
           mkdir -p assets/models
           curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
       - name: Générer les dossiers de plateforme
-        run: flutter create --platforms=android .
+        run: flutter create --project-name tilawa --platforms=android .
       - run: flutter pub get
       - name: Build APK
         run: flutter build apk --release
@@ -50,7 +50,7 @@ jobs:
           mkdir assets\models -Force
           curl -L "$env:VOSK_MODEL_URL" -o assets\models\vosk-ar.zip
         shell: pwsh
-      - run: flutter create --platforms=windows .
+      - run: flutter create --project-name tilawa --platforms=windows .
       - run: flutter pub get
       - run: flutter build windows --release
       - name: Zipper le build Windows
@@ -70,7 +70,7 @@ jobs:
         run: |
           mkdir -p assets/models
           curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
-      - run: flutter create --platforms=macos .
+      - run: flutter create --project-name tilawa --platforms=macos .
       - run: flutter pub get
       - run: flutter build macos --release
       - name: Zipper l'app macOS
@@ -95,7 +95,7 @@ jobs:
         run: |
           mkdir -p assets/models
           curl -L "$VOSK_MODEL_URL" -o assets/models/vosk-ar.zip
-      - run: flutter create --platforms=linux .
+      - run: flutter create --project-name tilawa --platforms=linux .
       - run: flutter pub get
       - run: flutter build linux --release
       - name: Archiver le build Linux

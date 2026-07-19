@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
-        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable }
+        with: { channel: stable }
       - name: Télécharger le modèle Vosk
         run: |
           mkdir assets\models -Force
